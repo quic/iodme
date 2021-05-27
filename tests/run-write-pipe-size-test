@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+
+[ "$1" != "" ] && OUT=$1
+
+if [ $(whoami) != root ]; then
+	echo "Run me as root or under sudo"
+	exit 1
+fi
+
+do_run()
+{
+	size=$1; shift
+	mode=$*
+	echo ###############
+	echo $size $mode
+	/usr/bin/time $TOOLDIR/iodme-file-write $size $mode $OUT
+	echo ###############
+}
+
+[ "$TOOLDIR" = "" ] && TOOLDIR=tools 
+
+# Make sure we have enough huge pages
+# To accomodate 1GB and 2GB mappings
+echo 2024 > /proc/sys/vm/nr_hugepages
+echo 2024 > /proc/sys/vm/nr_hugepages
+
+PIPE_SIZES="1048576 2097152 4194304 8194304 16777216"
+
+for ps in $PIPE_SIZES; do
+	# Drop all caches
+	echo 3 > /proc/sys/vm/drop_caches
+
+	echo $ps > /proc/sys/fs/pipe-max-size
+	echo "pipe-size: $(cat /proc/sys/fs/pipe-max-size)"
+
+	do_run 1GB use_directio use_splice use_hugepages
+done

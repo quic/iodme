@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+
+usage()
+{
+	echo "Usage: run-data-gen-test <num-streams> <sink-hostname> <duration-secs> [daga-gen options]"
+	exit 1
+}
+
+do_run()
+{
+	idx=$1; shift
+	sink=$1; shift
+	logfile=$(pwd)/data-gen.log.$idx
+	echo "starting data generator $idx to $sink, logfile $logfile"
+	$TOOLDIR/iodme-generator --sink-host=$sink --log-output $logfile $* &
+}
+
+N=$1; shift
+SINK=$1; shift
+DURATION=$1; shift
+
+[ "$N" = "" -o "$SINK" = "" -o "$DURATION" = "" ] && usage
+
+if [ $(whoami) != root ]; then
+	echo "Run me as root or under sudo"
+	exit 1
+fi
+
+[ "$TOOLDIR" = "" ] && TOOLDIR=tools 
+
+for ((i=0; i<$N; i++)); do
+	do_run $i $SINK $*
+done
+
+echo waiting for $DURATION seconds
+sleep $DURATION
+
+echo stopping all generators
+kill $(jobs -p) 
+
+wait
