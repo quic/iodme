@@ -48,3 +48,9 @@ sudo ./src/run-data-gen-test 2 localhost 30
 
 Run _iodme-generator --help_ to see the documentation for all options.
 The script above is just a wrapper that starts multiple data generators.
+
+## License
+
+SPDX-License-Identifier: BSD-3-Clause
+
+See [LICENSE](LICENSE) for the full license text.
