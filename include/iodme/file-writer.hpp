@@ -69,7 +69,7 @@ public:
 	};
 
 	file_writer(const std::string& name, const std::string& odir, iodme::queue &in_q, iodme::queue &out_q,
-			uint64_t in_poll_period_ns = 100000, unsigned int flags = 0) :
+			unsigned int flags = 0, uint64_t in_poll_period_ns = 100000) :
 		thread(name),
 		_odir(odir),
 		_in_q(in_q),
