@@ -154,7 +154,7 @@ void file_writer::loop()
 		// Get new buffer if we don't have any
 		if (!_in_q.pop(b)) {
 			// wait for buffers to be available
-			iodme::thread::do_nanosleep(100000);
+			iodme::thread::do_nanosleep(_in_pp_ns);
 			continue;
 		}
 

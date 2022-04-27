@@ -52,6 +52,7 @@ private:
 	std::string   _odir;
 	iodme::queue& _in_q;
 	iodme::queue& _out_q;
+	uint64_t      _in_pp_ns;
 	unsigned int  _flags;
 
 	// O_DIRECT requires multiple of block size (most devices use 512)
@@ -67,11 +68,13 @@ public:
 		SPLICE   = (1<<1)
 	};
 
-	file_writer(const std::string& name, const std::string& odir, iodme::queue &in_q, iodme::queue &out_q, unsigned int flags = 0) :
+	file_writer(const std::string& name, const std::string& odir, iodme::queue &in_q, iodme::queue &out_q,
+			uint64_t in_poll_period_ns = 100000, unsigned int flags = 0) :
 		thread(name),
 		_odir(odir),
 		_in_q(in_q),
 		_out_q(out_q),
+		_in_pp_ns(in_poll_period_ns),
 		_flags(flags)
 	{}
 };
